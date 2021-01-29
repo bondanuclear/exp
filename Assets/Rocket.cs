@@ -13,6 +13,14 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource;
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 10f;
+
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip Death;
+    [SerializeField] AudioClip GoToNextLevel;
+
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem DeathParticles;
+    [SerializeField] ParticleSystem GoToNextLevelParticles;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,12 +34,12 @@ public class Rocket : MonoBehaviour
     {
         if (state == State.Alive)
         {
-            Thrust();
-            Rotating();
+            RespondToThrustInput();
+            RespondToRotateInput();
 
         }
     }
-    private void Rotating()
+    private void RespondToRotateInput()
     {
 
         rigidBody.freezeRotation = true;
@@ -48,19 +56,30 @@ public class Rocket : MonoBehaviour
         rigidBody.freezeRotation = false;
     }
 
-    private void Thrust()
+    private void RespondToThrustInput()
     {
-        
+
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust);
-            if (!audioSource.isPlaying)
-            {
-                audioSource.Play();
-            }
+            ApplyThrust();
         }
-        else audioSource.Stop();
+        else
+        {
+            audioSource.Stop();
+            mainEngineParticles.Stop();
+        }
     }
+
+    private void ApplyThrust()
+    {
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(mainEngine);
+        }
+        mainEngineParticles.Play();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (state != State.Alive) { return;}
@@ -69,17 +88,41 @@ public class Rocket : MonoBehaviour
             case "Friendly": 
                 break;
             case "Finish":
-                state = State.Transcending;
-                Invoke("LoadNextLevel", 1f);
+                StartNexLevelSequence();
                 break;
             default:
-                state = State.Dying;
-                Invoke("LoadFirstLevel", 1.5f);
+                StartDeathSequence();
                 break;
         }
 
     }
+
     
+    private void StartNexLevelSequence()
+    {
+        state = State.Transcending;
+        GoToNextLevelParticles.Play();
+        NextLevelSound();
+        Invoke("LoadNextLevel", 1f);
+    }
+    private void StartDeathSequence()
+    {
+        state = State.Dying;
+        audioSource.Stop();
+        DeathParticles.Play();
+        DeathSound();
+        Invoke("LoadFirstLevel", 1.5f);
+    }
+
+    private void NextLevelSound()
+    {
+        audioSource.PlayOneShot(GoToNextLevel);
+
+    }
+    private void DeathSound()
+    {
+        audioSource.PlayOneShot(Death);
+    }
     private void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
