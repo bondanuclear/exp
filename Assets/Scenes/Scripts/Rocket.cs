@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 public class Rocket : MonoBehaviour
 {
     //State
-    enum State {Alive, Dying, Transcending }
+    enum State { Alive, Dying, Transcending }
     State state = State.Alive;
-        //
+    //
     Rigidbody rigidBody;
     AudioSource audioSource;
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 10f;
-
+    [SerializeField] float levelLoadDelay = 2f;
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip Death;
     [SerializeField] AudioClip GoToNextLevel;
@@ -103,7 +103,7 @@ public class Rocket : MonoBehaviour
         state = State.Transcending;
         GoToNextLevelParticles.Play();
         NextLevelSound();
-        Invoke("LoadNextLevel", 1f);
+        Invoke("LoadNextLevel", levelLoadDelay );
     }
     private void StartDeathSequence()
     {
@@ -111,7 +111,7 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         DeathParticles.Play();
         DeathSound();
-        Invoke("LoadFirstLevel", 1.5f);
+        Invoke("LoadFirstLevel", levelLoadDelay);
     }
 
     private void NextLevelSound()
