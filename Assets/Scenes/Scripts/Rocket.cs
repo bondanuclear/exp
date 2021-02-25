@@ -2,7 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+/// <summary>
+/// The main <c>Math</c> class.
+/// Contains all methods for performing basic math functions.
+/// <list type="bullet">
+/// <item>
+/// <term>Add</term>
+/// <description>Addition Operation</description>
+/// </item>
+/// <item>
+/// <term>Subtract</term>
+/// <description>Subtraction Operation</description>
+/// </item>
+/// <item>
+/// <term>Multiply</term>
+/// <description>Multiplication Operation</description>
+/// </item>
+/// <item>
+/// <term>Divide</term>
+/// <description>Division Operation</description>
+/// </item>
+/// </list>
+/// </summary>
+/// <remarks>
+/// <para>This class can add, subtract, multiply and divide.</para>
+/// <para>These operations can be performed on both integers and doubles.</para>
+/// </remarks>
 public class Rocket : MonoBehaviour
 {
     //State
@@ -39,6 +64,17 @@ public class Rocket : MonoBehaviour
 
         }
     }
+    /// <summary>
+    ///Determines the button for rotating the rocket and calculating the speed of rotation.
+    /// </summary>
+    /// <returns>
+    /// Nothing
+    /// </returns>
+    /// See <see cref="Rocket.RespondToThrustInput()"/> to get to the acceleration of the rocket.
+    /// <seealso cref="Rocket.ApplyThrust()"/>
+    /// <seealso cref="Rocket.OnCollisionEnter(Collision)"/>
+    /// <seealso cref="Rocket.StartNexLevelSequence()"/>
+    /// <seealso cref="Rocket.StartDeathSequence()"/>
     private void RespondToRotateInput()
     {
 
@@ -55,7 +91,13 @@ public class Rocket : MonoBehaviour
         }
         rigidBody.freezeRotation = false;
     }
-
+    /// <summary>
+    /// Responsible for acceleration of the rocket. Determines the button("space") for thrusting
+    /// </summary>
+    /// <returns>
+    /// Nothing
+    /// </returns>
+    /// See <see cref="Rocket.RespondToRotateInput"/> to get to the rotation of the rocket.
     private void RespondToThrustInput()
     {
 
@@ -69,7 +111,13 @@ public class Rocket : MonoBehaviour
             mainEngineParticles.Stop();
         }
     }
-
+    /// <summary>
+    /// Regulating accelerating force and thrusting sound.
+    /// </summary>
+    /// <returns>
+    /// Nothing
+    /// </returns>
+    /// 
     private void ApplyThrust()
     {
         rigidBody.AddRelativeForce(Vector3.up * mainThrust);
@@ -79,7 +127,10 @@ public class Rocket : MonoBehaviour
         }
         mainEngineParticles.Play();
     }
-
+    /// <summary>
+    /// Tracks the incoming collision.
+    /// </summary>
+    /// <param name="collision">Parameter for collision</param>
     void OnCollisionEnter(Collision collision)
     {
         if (state != State.Alive) { return;}
@@ -97,7 +148,9 @@ public class Rocket : MonoBehaviour
 
     }
 
-    
+    /// <summary>
+    /// Begins the loading of the next level.
+    /// </summary>
     private void StartNexLevelSequence()
     {
         state = State.Transcending;
@@ -105,6 +158,9 @@ public class Rocket : MonoBehaviour
         NextLevelSound();
         Invoke("LoadNextLevel", levelLoadDelay );
     }
+    /// <summary>
+    /// Disables to move. Creates an explosion.
+    /// </summary>
     private void StartDeathSequence()
     {
         state = State.Dying;
@@ -113,21 +169,31 @@ public class Rocket : MonoBehaviour
         DeathSound();
         Invoke("LoadFirstLevel", levelLoadDelay);
     }
-
+    /// <summary>
+    /// Creates the sound after hitting the landing pad.
+    /// </summary>
     private void NextLevelSound()
     {
         audioSource.PlayOneShot(GoToNextLevel);
 
     }
+    /// <summary>
+    /// Creates the sound after hitting an obstacle
+    /// </summary>
     private void DeathSound()
     {
         audioSource.PlayOneShot(Death);
     }
+    /// <summary>
+    /// Loads first level.
+    /// </summary>
     private void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
     }
-
+    /// <summary>
+    /// Loads next level.
+    /// </summary>
     private void LoadNextLevel()
     {
         SceneManager.LoadScene(1);
