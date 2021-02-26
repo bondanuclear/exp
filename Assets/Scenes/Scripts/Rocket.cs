@@ -2,37 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-/// <summary>
-/// The main <c>Math</c> class.
-/// Contains all methods for performing basic math functions.
-/// <list type="bullet">
-/// <item>
-/// <term>Add</term>
-/// <description>Addition Operation</description>
-/// </item>
-/// <item>
-/// <term>Subtract</term>
-/// <description>Subtraction Operation</description>
-/// </item>
-/// <item>
-/// <term>Multiply</term>
-/// <description>Multiplication Operation</description>
-/// </item>
-/// <item>
-/// <term>Divide</term>
-/// <description>Division Operation</description>
-/// </item>
-/// </list>
-/// </summary>
-/// <remarks>
-/// <para>This class can add, subtract, multiply and divide.</para>
-/// <para>These operations can be performed on both integers and doubles.</para>
-/// </remarks>
+
 public class Rocket : MonoBehaviour
 {
     //State
     enum State { Alive, Dying, Transcending }
     State state = State.Alive;
+    bool smert = false;
     //
     Rigidbody rigidBody;
     AudioSource audioSource;
@@ -42,7 +18,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip Death;
     [SerializeField] AudioClip GoToNextLevel;
-
+    private GameObject Cube;
     [SerializeField] ParticleSystem mainEngineParticles;
     [SerializeField] ParticleSystem DeathParticles;
     [SerializeField] ParticleSystem GoToNextLevelParticles;
@@ -147,7 +123,10 @@ public class Rocket : MonoBehaviour
         }
 
     }
-
+    public Rocket GetRocket()
+    {
+        return rigidBody.GetComponent<Rocket>();
+    }
     /// <summary>
     /// Begins the loading of the next level.
     /// </summary>
@@ -164,6 +143,7 @@ public class Rocket : MonoBehaviour
     private void StartDeathSequence()
     {
         state = State.Dying;
+        smert = true;
         audioSource.Stop();
         DeathParticles.Play();
         DeathSound();
